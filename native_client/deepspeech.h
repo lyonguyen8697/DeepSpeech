@@ -31,6 +31,9 @@ typedef struct MetadataItem {
 
   /** Position of the character in seconds */
   float start_time;
+
+  /** Probability of the character */
+  float probability;
 } MetadataItem;
 
 /**

@@ -111,20 +111,22 @@ PathTrie* PathTrie::get_path_trie(int new_char, int new_timestep, float cur_log_
   }
 }
 
-void PathTrie::get_path_vec(std::vector<int>& output, std::vector<int>& timesteps) {
+void PathTrie::get_path_vec(std::vector<int>& output, std::vector<int>& timesteps, std::vector<float>& probabilities) {
   // Recursive call: recurse back until stop condition, then append data in
   // correct order as we walk back down the stack in the lines below.
   if (parent != nullptr) {
-    parent->get_path_vec(output, timesteps);
+    parent->get_path_vec(output, timesteps, probabilities);
   }
   if (character != ROOT_) {
     output.push_back(character);
     timesteps.push_back(timestep);
+    probabilities.push_back(log_prob_c);
   }
 }
 
 PathTrie* PathTrie::get_prev_grapheme(std::vector<int>& output,
-                                      std::vector<int>& timesteps)
+                                      std::vector<int>& timesteps,
+                                      std::vector<float>& probabilities)
 {
   PathTrie* stop = this;
   if (character == ROOT_) {
@@ -134,10 +136,11 @@ PathTrie* PathTrie::get_prev_grapheme(std::vector<int>& output,
   // correct order as we walk back down the stack in the lines below.
   //FIXME: use Alphabet instead of hardcoding +1 here
   if (!byte_is_codepoint_boundary(character + 1)) {
-    stop = parent->get_prev_grapheme(output, timesteps);
+    stop = parent->get_prev_grapheme(output, timesteps, probabilities);
   }
   output.push_back(character);
   timesteps.push_back(timestep);
+  probabilities.push_back(log_prob_c);
   return stop;
 }
 
@@ -157,6 +160,7 @@ int PathTrie::distance_to_codepoint_boundary(unsigned char *first_byte)
 
 PathTrie* PathTrie::get_prev_word(std::vector<int>& output,
                                   std::vector<int>& timesteps,
+                                  std::vector<float>& probabilities,
                                   int space_id)
 {
   PathTrie* stop = this;
@@ -166,10 +170,11 @@ PathTrie* PathTrie::get_prev_word(std::vector<int>& output,
   // Recursive call: recurse back until stop condition, then append data in
   // correct order as we walk back down the stack in the lines below.
   if (parent != nullptr) {
-    stop = parent->get_prev_word(output, timesteps, space_id);
+    stop = parent->get_prev_word(output, timesteps, probabilities, space_id);
   }
   output.push_back(character);
   timesteps.push_back(timestep);
+  probabilities.push_back(log_prob_c);
   return stop;
 }
 

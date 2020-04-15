@@ -198,7 +198,7 @@ DecoderState::decode() const
   // return order of decoding result. To delete when decoder gets stable.
   for (size_t i = 0; i < num_returned; ++i) {
     Output output;
-    prefixes_copy[i]->get_path_vec(output.tokens, output.timesteps);
+    prefixes_copy[i]->get_path_vec(output.tokens, output.timesteps, output.probabilities);
     double approx_ctc = scores[prefixes_copy[i]];
     if (ext_scorer_ != nullptr) {
       auto words = ext_scorer_->split_labels_into_scored_units(output.tokens);

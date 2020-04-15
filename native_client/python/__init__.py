@@ -206,6 +206,13 @@ class MetadataItem(object):
         # pylint: disable=unnecessary-pass
         pass
 
+    def probability(self):
+        """
+        Probability of the character
+        """
+        # pylint: disable=unnecessary-pass
+        pass
+
 
 class Metadata(object):
     """
